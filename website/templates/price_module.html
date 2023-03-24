@@ -1,0 +1,66 @@
+<!-- This template will be same as base.html but we can override anything we want -->
+
+<!-- - Fuel Quote Form with following fields: (We are not building pricing module yet)
+    - Gallons Requested (numeric, required)
+    - Delivery Address (Non-editable, comes from client profile)
+    - Delivery Date (Calender, date picker)
+    - Suggested Price / gallon (numeric non-editable, price will be calculated by Pricing Module - we are not building pricing module yet)
+    - Total Amount Due (numeric non-editable, calculated (gallons * price))
+ -->
+{% extends "base.html" %}
+{% block title %}Module{% endblock %}
+
+{% block content %}
+
+<h3 align="center">Get A Quote</h3>
+
+<form method="POST">
+    <div class="form-group">
+        <label for="gallons">Gallons Requested</label>
+        <input type="text" class="form-control" id="gallons" name="gallons" placeholder="Gallons">
+    </div>
+    <div class="form-group">
+        <label for="date">Prefered Delivery Date</label>
+        <input type="date" class="form-control" id="date" name="date" placeholder="Delivery Date" />
+    </div>
+    {% if current_user.address1 is not none %}
+    <div class="form-group">
+        <label for="address">Delivery Address: {{current_user.address1}}</label>
+    </div>
+    <div>
+        <button type="submit" class="btn btn-primary" id="calculate">Get Quote</button>
+    </div>
+    <br />
+    <div>
+        <span id="total" style="font-weight:bold;">
+            Update profile if you would like to change delivery address.
+        </span>
+    </div>
+    {% endif %}
+
+    {% if current_user.address1 is none %}
+    <div class="form-group">
+        <label for="address">Update Profile to request a quote.</label>
+    </div>
+    {% endif %}
+
+
+</form>
+
+
+
+
+<div>
+    {% if current_user.transactions | length > 0%}
+    <h4>Your most recent quote</h4>
+    {{current_user.transactions[-1].gallons}}
+    gallons to arive on
+    {{current_user.transactions[-1].delivery_date}}:
+    <span id="total" style="font-weight:bold;">
+        ${{current_user.transactions[-1].total}}
+    </span>
+    {% endif %}
+</div>
+
+
+{% endblock %}
